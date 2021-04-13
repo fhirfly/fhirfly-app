@@ -1,3 +1,0 @@
-# FHIRFLY
-
-Assign to areeb.
