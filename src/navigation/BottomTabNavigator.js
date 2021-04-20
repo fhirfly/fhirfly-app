@@ -12,7 +12,7 @@ import OrganizationScreen from '../screens/OrganizationScreen';
 import PractitionersScreen from '../screens/PractitionersScreen';
 import BenefitsDetailsScreen from '../screens/BenefitsDetailsScreen';
 
-import { hp } from '../utils/utility';
+import { hp, wp } from '../utils/utility';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +29,7 @@ const BottomTabNavigator = () => (
             name="Home"
             options={{
                 tabBarIcon: ({ focused, color, size }) => (
-                    <Image style={{ tintColor: focused ? '#F19344' : '#707070' }} source={require('../assets/icons/home.png')} />
+                    <Image style={{ tintColor: focused ? '#F19344' : '#707070', width: wp(7), height: hp(3.5), resizeMode: 'contain' }} source={require('../assets/icons/home.png')} />
                 )
             }}
             component={HomeScreen}
@@ -39,7 +39,7 @@ const BottomTabNavigator = () => (
             options={{
                 title: 'My Account',
                 tabBarIcon: ({ focused, color, size }) => (
-                    <Image style={{ tintColor: focused ? '#F19344' : '#707070' }} source={require('../assets/icons/account.png')} />
+                    <Image style={{ tintColor: focused ? '#F19344' : '#707070', width: wp(7), height: hp(3.5), resizeMode: 'contain' }} source={require('../assets/icons/account.png')} />
                 )
             }}
             component={AccountStack}

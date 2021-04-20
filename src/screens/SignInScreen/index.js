@@ -28,7 +28,7 @@ class SignInScreen extends Component {
                         </TouchableOpacity>
                     </Left>
                     <Body>
-                        <Image source={require('../../assets/images/signInLogo.png')} />
+                        <Image style={{ width: wp(45), height: hp(6), resizeMode: 'contain' }} source={require('../../assets/images/signInLogo.png')} />
                     </Body>
                 </Header>
                 <View style={{ height: hp(8) }} />
@@ -57,15 +57,14 @@ class SignInScreen extends Component {
                                 height: hp(6)
                             }}
                         />
-                    </View>
-                    <View style={{ height: hp(4) }} />
-                    <View style={styles.checkboxContainer}>
-                        <CheckBox
-                            value={isSelected}
-                            onValueChange={this.setSelection}
-                            style={styles.checkbox}
-                        />
-                        <Text style={styles.label}>Remember Me</Text>
+                        <View style={{ height: hp(4) }} />
+                        <View style={styles.checkboxContainer}>
+                            <CheckBox
+                                value={isSelected}
+                                onValueChange={this.setSelection}
+                            />
+                            <Text style={styles.label}>Remember Me</Text>
+                        </View>
                     </View>
                     <View style={{ height: hp(4) }} />
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('dashboard')} style={{ justifyContent: 'center', alignItems: 'center', width: wp(90), height: hp(8), backgroundColor: '#0079bb', borderRadius: 4 }}>
@@ -100,9 +99,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: wp(90),
         alignItems: 'center',
-    },
-    checkbox: {
-        marginLeft: wp(-2)
     },
     label: {
         margin: 8,

@@ -41,7 +41,7 @@ class AccountScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Image source={require('../../assets/images/user1.png')} />
+                <Image style={{ width: wp(30), height: hp(15), resizeMode: 'contain' }} source={require('../../assets/images/user1.png')} />
                 <View style={{ flexDirection: 'row', paddingTop: hp(1.5) }}>
                     <Text style={{ fontSize: 20, fontWeight: '700' }}>Samuel Smith </Text>
                     <Text>(28)</Text>
@@ -51,7 +51,7 @@ class AccountScreen extends Component {
                     this.state.mainBtn.map((item, index) => (
                         <TouchableOpacity onPress={() => this.props.navigation.navigate(item.route)} key={index} style={styles.mainBtn}>
                             <View style={{ width: wp(70), flexDirection: 'row', alignItems: 'center' }}>
-                                <Image source={item.image} />
+                                <Image style={{ width: wp(5), height: hp(2.5), resizeMode: 'contain' }} source={item.image} />
                                 <Text style={{ paddingLeft: wp(4) }}>{item.name}</Text>
                             </View>
                             <Entypo name="chevron-small-right" size={24} color="black" />
@@ -59,7 +59,7 @@ class AccountScreen extends Component {
                     ))
                 }
                 <TouchableOpacity style={{ flexDirection: 'row', width: wp(30), height: hp(7), backgroundColor: '#919191', borderRadius: 30, alignItems: 'center', paddingLeft: wp(3), alignSelf: 'flex-start', marginLeft: wp(4), marginTop: hp(1) }}>
-                    <Image source={require('../../assets/icons/logout.png')} />
+                    <Image style={{ width: wp(4), height: hp(2), resizeMode: 'contain' }} source={require('../../assets/icons/logout.png')} />
                     <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', paddingLeft: wp(2) }}>Logout</Text>
                 </TouchableOpacity>
             </View>

@@ -181,8 +181,8 @@ class BenefitsScreen extends Component {
                         <Title style={{ color: '#000' }}>Benifits</Title>
                     </Body>
                     <Right style={{ flex: 1 }}>
-                        <TouchableOpacity onPress={() => this.RBSheet.open()} style={{}}>
-                            <Image source={require('../../assets/icons/filter-tool.png')} />
+                        <TouchableOpacity onPress={() => this.RBSheet.open()}>
+                            <Image style={{ width: wp(7), height: hp(3.5), resizeMode: 'contain' }} source={require('../../assets/icons/filter-tool.png')} />
                         </TouchableOpacity>
                     </Right>
                 </Header>
@@ -195,7 +195,7 @@ class BenefitsScreen extends Component {
                             <TextInput
                                 placeholder={"Search Benifits "}
                                 placeholderTextColor={"#979797"}
-                                style={{ fontSize: 15, fontWeight: '700', marginLeft: Platform.OS == 'web' ? wp(1) : wp(2), color: '#000' }}
+                                style={{ fontSize: 15, fontWeight: '700', marginLeft: wp(2), color: '#000' }}
                             />
                         </View>
                     </View>

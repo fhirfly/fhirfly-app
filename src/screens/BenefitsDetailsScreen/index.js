@@ -115,7 +115,7 @@ class BenefitsDetailsScreen extends Component {
                     <View style={{ flexDirection: 'row', marginHorizontal: wp(4), marginTop: hp(2) }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', height: hp(9), }}>
                             <View style={{ width: wp(48), flexDirection: 'row', alignItems: 'center', height: hp(9), }}>
-                                <Image style={{ width: wp(13), borderRadius: 15 }} resizeMode='contain' source={require('../../assets/images/user1.png')} />
+                                <Image style={{ width: wp(13), height: hp(6.5), resizeMode: 'contain', borderRadius: 15 }} resizeMode='contain' source={require('../../assets/images/user1.png')} />
                                 <View style={{ paddingLeft: wp(2) }}>
                                     <Text style={[styles.value, { fontSize: 14, fontWeight: '700' }]}>Bryon Rempel</Text>
                                     <Text style={[styles.label, { fontSize: 12, }]}>Pharmacist</Text>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Image, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Platform, StyleSheet } from 'react-native';
 import { Container, Header, Left, Body, Button } from 'native-base';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -50,9 +50,9 @@ class ConnectHealthAccountScreen extends Component {
                     <Body></Body>
                 </Header>
                 <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={require('../../assets/images/connect1.png')} />
-                    <Image style={{ marginHorizontal: wp(2) }} source={require('../../assets/images/connectTo.png')} />
-                    <Image source={require('../../assets/images/connect2.png')} />
+                    <Image style={styles.TopImageSize} source={require('../../assets/images/connect1.png')} />
+                    <Image style={{ width: wp(10), height: hp(5), resizeMode: 'contain', marginHorizontal: wp(2) }} source={require('../../assets/images/connectTo.png')} />
+                    <Image style={styles.TopImageSize} source={require('../../assets/images/connect2.png')} />
                 </View>
                 <View style={{ height: hp(3) }} />
                 <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>Connect FHIRFLY to your CVS Health Account</Text>
@@ -65,7 +65,7 @@ class ConnectHealthAccountScreen extends Component {
                     {
                         this.state.userAccess.map((item, index) => (
                             <TouchableOpacity key={index} onPress={() => this.selectUserAccess(index)} style={{ marginHorizontal: wp(2) }}>
-                                <Image source={item.userImage} />
+                                <Image style={styles.userAccessImageSize} source={item.userImage} />
                                 <Text style={{ fontSize: 15, fontWeight: '700', paddingVertical: hp(0.5) }}>{item.name}</Text>
                                 <Text>{item.age}</Text>
                                 {
@@ -95,3 +95,12 @@ class ConnectHealthAccountScreen extends Component {
 }
 
 export default ConnectHealthAccountScreen;
+
+const styles = StyleSheet.create({
+    TopImageSize: {
+        width: wp(24), height: hp(12), resizeMode: 'contain'
+    },
+    userAccessImageSize: {
+        width: wp(28), height: hp(14), resizeMode: 'contain'
+    }
+})
