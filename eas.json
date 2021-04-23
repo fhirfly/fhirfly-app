@@ -2,12 +2,50 @@
   "builds": {
     "android": {
       "release": {
-        "workflow": "generic"
+        {
+          "workflow": "managed",
+          "extends": string,
+          "credentialsSource": "local" | "remote", // default: "remote"
+          "buildType": "app-bundle" | "apk", // default: "app-bundle"
+          "releaseChannel": string, // default: "default"
+          "distribution": "store" | "internal", // default: "store"
+          "image": string, // default: "default"
+          "node": string,
+          "yarn": string,
+          "ndk": string,
+          "env": Record<string, string>,
+          "cache": {
+            "disabled" : boolean, // default: false
+            "key": string,
+            "customPaths": string[] // default: []
+          }
+        }
       }
     },
     "ios": {
       "release": {
-        "workflow": "generic"
+        {
+          "workflow": "managed",
+          "extends": string,
+          "credentialsSource": "local" | "remote", // default: "remote"
+          "releaseChannel": string, // default: "default"
+          "distribution": "store" | "internal" | "simulator", // default: "store"
+          "enterpriseProvisioning": "adhoc" | "universal",
+          "autoIncrement": boolean | "version" | "buildNumber", // default: false
+          "image": string, // default: "default"
+          "node": string,
+          "yarn": string,
+          "bundler": string,
+          "fastlane": string,
+          "cocoapods": string,
+          "env": Record<string, string>,
+          "cache": {
+            "disabled": boolean, // default: false
+            "key": string,
+            "cacheDefaultPaths": boolean, // default: true
+            "customPaths": string[] // default: []
+        }
+      }
       }
     }
   }
