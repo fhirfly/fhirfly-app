@@ -1,3 +1,4 @@
+//https://docs.expo.io/build/eas-json/
 {
   "builds": {
     "android": {
