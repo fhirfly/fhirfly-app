@@ -71,9 +71,6 @@ class HealthCareScreen extends Component {
 
     const selected = this.state.healthProvider.find((item) => item.selected);
     if (selected) {
-      console.log(
-        `${selected.resource.address}/.well-known/smart-configuration`
-      );
       axios
         .get(`${selected.resource.address}/.well-known/smart-configuration`)
         .then((res) => {

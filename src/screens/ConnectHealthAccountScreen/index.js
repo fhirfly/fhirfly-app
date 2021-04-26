@@ -16,28 +16,6 @@ import FHIR from "fhirclient";
 class ConnectHealthAccountScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      userAccess: [
-        {
-          userImage: require("../../assets/images/user1.png"),
-          name: "Samuel Smith",
-          age: "28 yrs old.",
-          connected: true,
-        },
-        {
-          userImage: require("../../assets/images/user2.png"),
-          name: "Jordan Smith",
-          age: "60 yrs old.",
-          connected: false,
-        },
-        {
-          userImage: require("../../assets/images/user3.png"),
-          name: "Dawn Smith",
-          age: "58 yrs old.",
-          connected: false,
-        },
-      ],
-    };
   }
 
   selectUserAccess = (index) => {
@@ -50,12 +28,16 @@ class ConnectHealthAccountScreen extends Component {
     const { org, scopes } = this.props.route.params;
     const allScopes = scopes.scopes_supported.toString();
     const regex = /,/gi;
-
     try {
       FHIR.oauth2.authorize({
         client_id: "0oabfidz5F3Ho3w8G5d6",
         scope: allScopes.replace(regex, " "),
         fhirServiceUrl: org.resource.address,
+        completeInTarget: true,
+        iss: org.resource.address,
+        target: "_self",
+        redirect_uri: "http://localhost:19006/dashboard",
+        client_secret: "TppBdLtYVlBEsepxpN20fM8KUde4l26007NQoia7",
       });
     } catch (err) {
       console.log(err);
@@ -113,54 +95,7 @@ class ConnectHealthAccountScreen extends Component {
           Allow FHIRFLY to access:
         </Text>
         <View style={{ height: hp(2) }} />
-        {/* <Text style={{ textAlign: "center", fontSize: 16 }}>
-          Whose record do you want to allow access to?
-        </Text>
-        <View style={{ height: hp(3) }} />
-        <View
-          style={{
-            justifyContent: "center",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          {this.state.userAccess.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => this.selectUserAccess(index)}
-              style={{ marginHorizontal: wp(2) }}
-            >
-              <Image
-                style={styles.userAccessImageSize}
-                source={item.userImage}
-              />
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: "700",
-                  paddingVertical: hp(0.5),
-                }}
-              >
-                {item.name}
-              </Text>
-              <Text>{item.age}</Text>
-              {item.connected ? (
-                <Image
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    width: wp(7),
-                    height: hp(4),
-                  }}
-                  resizeMode="contain"
-                  source={require("../../assets/icons/connected.png")}
-                />
-              ) : null}
-            </TouchableOpacity>
-          ))}
-        </View>
-        <View style={{ height: hp(5) }} /> */}
+
         <Text style={{ textAlign: "center", fontSize: 16 }}>
           Select the account you want to allow connection.
         </Text>
