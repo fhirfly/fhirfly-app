@@ -36,7 +36,7 @@ class ConnectHealthAccountScreen extends Component {
         completeInTarget: true,
         iss: org.resource.address,
         target: "_self",
-        redirect_uri: "http://localhost:19006/dashboard",
+        redirect_uri: "http://localhost:19006/callback",
         client_secret: "TppBdLtYVlBEsepxpN20fM8KUde4l26007NQoia7",
       });
     } catch (err) {

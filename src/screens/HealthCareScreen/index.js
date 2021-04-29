@@ -11,9 +11,11 @@ import {
   Platform,
   ActivityIndicator,
 } from "react-native";
-
+import _ from "lodash";
 import { wp, hp } from "../../utils/utility";
 import axios from "axios";
+import FHIR from "fhirclient";
+
 class HealthCareScreen extends Component {
   constructor(props) {
     super(props);
@@ -22,11 +24,11 @@ class HealthCareScreen extends Component {
       healthProvider: [],
       searchVal: "",
     };
+    this.onSearchDelayed = _.debounce(this.onSearch, 2000);
   }
 
   componentDidMount() {
     axios.get("https://api.fhirfly.io/network/Endpoint").then((res) => {
-      console.log(res.data);
       this.setState({ healthProvider: res.data.entry });
     });
   }
@@ -59,6 +61,14 @@ class HealthCareScreen extends Component {
     this.setState({ healthProvider: a });
   };
 
+  onSearch = (val) => {
+    axios
+      .get(`https://api.fhirfly.io/network/Endpoint/?name=${val}`)
+      .then((res) => {
+        this.setState({ healthProvider: res.data.entry });
+      });
+  };
+
   connectWithHealthCareProvider = () => {
     // let a = this.state.healthProvider;
     // for (let index = 0; index < a.length; index++) {
@@ -74,11 +84,29 @@ class HealthCareScreen extends Component {
       axios
         .get(`${selected.resource.address}/.well-known/smart-configuration`)
         .then((res) => {
-          console.log(res.data);
-          this.props.navigation.navigate("connectHealthAccount", {
-            scopes: res.data,
-            org: selected,
-          });
+          const org = selected;
+          const scopes = res.data;
+          const allScopes = scopes.scopes_supported.toString();
+          const regex = /,/gi;
+          try {
+            FHIR.oauth2.authorize({
+              clientId: "0oabfidz5F3Ho3w8G5d6",
+              scope: allScopes.replace(regex, " "),
+              fhirServiceUrl: org.resource.address,
+              completeInTarget: true,
+              iss: org.resource.address,
+              target: "_self",
+              redirect_uri: "http://localhost:19006/callback",
+              clientSecret: "TppBdLtYVlBEsepxpN20fM8KUde4l26007NQoia7",
+            });
+          } catch (err) {
+            console.log(err);
+          }
+
+          // this.props.navigation.navigate("connectHealthAccount", {
+          //   scopes: res.data,
+          //   org: selected,
+          // });
         });
     }
   };
@@ -86,10 +114,10 @@ class HealthCareScreen extends Component {
   render() {
     let data = this.state.healthProvider;
     const { searchVal } = this.state;
-    if (searchVal)
-      data = data.filter((item) =>
-        item.resource.name.toLowerCase().includes(searchVal.toLowerCase())
-      );
+    // if (searchVal)
+    //   data = data.filter((item) =>
+    //     item.resource.name.toLowerCase().includes(searchVal.toLowerCase())
+    //   );
     return (
       <View style={styles.container}>
         <ScrollView
@@ -168,8 +196,7 @@ class HealthCareScreen extends Component {
                   marginLeft: Platform.OS == "web" ? wp(1) : wp(2),
                   color: "#000",
                 }}
-                value={this.state.searchVal}
-                onChangeText={(val) => this.setState({ searchVal: val })}
+                onChangeText={this.onSearchDelayed}
               />
             </View>
           </View>
