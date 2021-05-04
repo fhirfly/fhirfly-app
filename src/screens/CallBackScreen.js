@@ -6,7 +6,7 @@ export default function CallBackScreen() {
   React.useEffect(() => {
     FHIR.oauth2
       .ready()
-      .then((client) => client.request("Patient"))
+      .then((client) => client.request("Patient/" + client.patient.id))
       .then(console.log)
       .catch(console.error);
   }, []);
