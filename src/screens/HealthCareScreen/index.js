@@ -93,6 +93,7 @@ class HealthCareScreen extends Component {
               clientId: "0oabfidz5F3Ho3w8G5d6",
               scope: allScopes.replace(regex, " "),
               fhirServiceUrl: org.resource.address,
+              audience: org.resource.address,
               completeInTarget: true,
               iss: org.resource.address,
               target: "_self",
