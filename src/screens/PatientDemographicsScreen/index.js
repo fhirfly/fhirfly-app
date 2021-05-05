@@ -3,147 +3,64 @@ import { View, Text, StyleSheet, TextInput, ScrollView } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import data from "../../utils/patients.json";
 import { wp, hp } from "../../utils/utility";
+import { connect } from "react-redux";
+import moment from "moment";
+
+const mapState = (state) => ({
+  user: state.auth.user,
+});
 
 class PatientDemographicsScreen extends Component {
   constructor(props) {
     super(props);
+
+    console.log(this.props);
+    const {
+      name,
+      identifier,
+      gender,
+      extension,
+      birthDate,
+      address,
+      telecom,
+    } = this.props.user.patient;
+    const membId = identifier.find((item) =>
+      item.type.coding.find((ite) => ite.code == "MR")
+    );
+    const birthSex = extension.find((item) =>
+      item.url.includes("us-core-birthsex")
+    );
+    const race = extension.find((item) => item.url.includes("us-core-race"));
+    const ethnicity = extension.find((item) =>
+      item.url.includes("us-core-ethnicity")
+    );
+
     this.state = {
-      firstName: "",
-      lastname: "",
-      memberId: "",
-      birthSex: "Male",
-      Gender: "Male",
-      raceEthnicity: "American",
-      months: [
-        { label: "January", value: "January" },
-        { label: "February", value: "February" },
-        { label: "March", value: "March" },
-        { label: "April", value: "April" },
-        { label: "May", value: "May" },
-        { label: "June", value: "June" },
-        { label: "July", value: "July" },
-        { label: "August", value: "August" },
-        { label: "September", value: "September" },
-        { label: "October", value: "October" },
-        { label: "November", value: "November" },
-        { label: "December", value: "December" },
-      ],
-      DAYS_IN_MONTH: [
-        { label: "01", value: "01" },
-        { label: "02", value: "02" },
-        { label: "03", value: "03" },
-        { label: "04", value: "04" },
-        { label: "05", value: "05" },
-        { label: "06", value: "06" },
-        { label: "07", value: "07" },
-        { label: "08", value: "08" },
-        { label: "09", value: "09" },
-        { label: "10", value: "10" },
-        { label: "11", value: "11" },
-        { label: "12", value: "12" },
-        { label: "13", value: "13" },
-        { label: "14", value: "14" },
-        { label: "15", value: "15" },
-        { label: "16", value: "16" },
-        { label: "17", value: "17" },
-        { label: "18", value: "18" },
-        { label: "19", value: "19" },
-        { label: "20", value: "20" },
-        { label: "21", value: "21" },
-        { label: "22", value: "22" },
-        { label: "23", value: "23" },
-        { label: "24", value: "24" },
-        { label: "25", value: "25" },
-        { label: "26", value: "26" },
-        { label: "27", value: "27" },
-        { label: "28", value: "28" },
-        { label: "29", value: "29" },
-        { label: "30", value: "30" },
-        { label: "31", value: "31" },
-      ],
-      days: [{ label: "01", value: "01" }],
-      years: [
-        { label: "2001", value: "2001" },
-        { label: "2002", value: "2002" },
-        { label: "2003", value: "2003" },
-        { label: "2004", value: "2004" },
-        { label: "2005", value: "2005" },
-        { label: "2006", value: "2006" },
-        { label: "2007", value: "2007" },
-        { label: "2008", value: "2008" },
-        { label: "2009", value: "2009" },
-        { label: "2010", value: "2010" },
-      ],
-      dateOfBirth: { month: "January", day: "01", year: "2001" },
-      city: "Lafayette",
-      state: "Indiana",
-      country: "United States of America",
-      telecom: "Brightpoint",
+      firstName: name[0].given[0],
+      lastName: name[0].family,
+      memberId: membId ? membId.value : "",
+      birthSex: birthSex ? birthSex.valueCode : "",
+      gender: gender,
+      race: race
+        ? race.extension.find((item) => item.valueString).valueString
+        : "",
+      ethnicity: ethnicity
+        ? ethnicity.extension.find((item) => item.valueString).valueString
+        : "",
+      birthDate: birthDate,
+      address: address && address.length > 0 ? address[0] : {},
+      telecom: telecom && telecom.length > 0 ? telecom[0] : { value: "" },
     };
   }
-
-  componentDidMount = () => {
-    this.selectDaysForCurrentMonth();
-  };
-
-  selectMonth = (item, state, key) => {
-    // let b = months;
-    // b.map(function (x) {
-    //     x.selected = true;
-    //     return x
-    // });
-    // b[index]['selected'] = true;
-    let a = state;
-    a.month = item.value;
-    this.setState({ [key]: a });
-    this.selectDaysForCurrentMonth();
-  };
-
-  selectDay = (item, state, key) => {
-    let a = state;
-    a.day = item.value;
-    this.setState({ [key]: a });
-  };
-
-  selectYear = (item, state, key) => {
-    let a = state;
-    a.year = item.value;
-    this.setState({ [key]: a });
-  };
-
-  selectDaysForCurrentMonth = () => {
-    let thirtyOne = [
-      "January",
-      "March",
-      "May",
-      "July",
-      "August",
-      "October",
-      "December",
-    ];
-    let thirty = ["April", "June", "September", "November"];
-
-    let b = this.state.dateOfBirth;
-
-    let defaultDays = this.state.DAYS_IN_MONTH;
-
-    if (thirtyOne.includes(b.month)) {
-      this.setState({ days: defaultDays.slice(0, 31) });
-    } else if (thirty.includes(b.month)) {
-      this.setState({ days: defaultDays.slice(0, 30) });
-    } else {
-      this.setState({ days: defaultDays.slice(0, 28) });
-    }
-  };
 
   render() {
     const {
       birthSex,
-      Gender,
-      raceEthnicity,
-      city,
-      state,
-      country,
+      gender,
+      race,
+      ethnicity,
+      birthDate,
+      address,
       telecom,
     } = this.state;
     const { dateOfBirth, months, days, years } = this.state;
@@ -160,6 +77,7 @@ class PatientDemographicsScreen extends Component {
                 placeholder="First name"
                 value={this.state.firstName}
                 onChangeText={(val) => this.setState({ firstName: val })}
+                readOnly={true}
               />
             </View>
           </View>
@@ -170,105 +88,103 @@ class PatientDemographicsScreen extends Component {
                 placeholder="Last name"
                 value={this.state.lastName}
                 onChangeText={(val) => this.setState({ lastName: val })}
+                readOnly={true}
               />
             </View>
           </View>
         </View>
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>Member ID</Text>
-          <View style={styles.inputContainer}>
-            <TextInput placeholder="Member ID" />
+          <View style={[styles.inputContainer]}>
+            <TextInput
+              placeholder="Member ID"
+              value={this.state.memberId}
+              onChangeText={(val) => this.setState({ memberId: val })}
+              style={{ width: "100%" }}
+              readOnly={true}
+            />
+          </View>
+        </View>
+        <View style={styles.doubleItemContainer}>
+          <View style={{ width: wp(42), zIndex: 5 }}>
+            <Text style={styles.label}>Birth Sex</Text>
+            <View style={[styles.inputContainer]}>
+              <TextInput
+                placeholder="Birth Sec"
+                value={birthSex}
+                onChangeText={(val) => this.setState({ birthSex: val })}
+                style={{ width: "100%" }}
+                readOnly={true}
+              />
+            </View>
+          </View>
+          <View style={{ width: wp(42) }}>
+            <Text style={styles.label}>Gender</Text>
+            <View style={[styles.inputContainer]}>
+              <TextInput
+                placeholder="Gender"
+                value={gender}
+                onChangeText={(val) => this.setState({ gender: val })}
+                style={{ width: "100%" }}
+                readOnly={true}
+              />
+            </View>
           </View>
         </View>
         <View style={styles.doubleItemContainer}>
           <View style={{ width: wp(42) }}>
-            <Text style={styles.label}>Birth Sex</Text>
-            <DropDownPicker
-              items={[
-                { label: "Male", value: "Male" },
-                { label: "Female", value: "Female" },
-              ]}
-              defaultValue={birthSex}
-              containerStyle={{ height: hp(6), width: wp(43) }}
-              style={{ backgroundColor: "#fafafa" }}
-              itemStyle={{ justifyContent: "flex-start" }}
-              dropDownStyle={{ backgroundColor: "#fafafa" }}
-              onChangeItem={(item) => this.setState({ birthSex: item.value })}
-            />
+            <Text style={styles.label}>Race</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="race"
+                value={race}
+                onChangeText={(val) => this.setState({ race: val })}
+                readOnly={true}
+              />
+            </View>
           </View>
           <View style={{ width: wp(42) }}>
-            <Text style={styles.label}>Gender</Text>
-            <DropDownPicker
-              items={[
-                { label: "Male", value: "Male" },
-                { label: "Female", value: "Female" },
-                { label: "Prefer not to say", value: "Prefer not to say" },
-              ]}
-              defaultValue={Gender}
-              containerStyle={{ height: hp(6), width: wp(43) }}
-              style={{ backgroundColor: "#fafafa" }}
-              itemStyle={{ justifyContent: "flex-start" }}
-              dropDownStyle={{ backgroundColor: "#fafafa" }}
-              onChangeItem={(item) => this.setState({ Gender: item.value })}
-            />
+            <Text style={styles.label}>Ethnicity</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="ethnicity"
+                value={ethnicity}
+                onChangeText={(val) => this.setState({ ethnicity: val })}
+                readOnly={true}
+              />
+            </View>
           </View>
-        </View>
-        <View style={styles.singleItemContainer}>
-          <Text style={styles.label}>Race & Ethnicity</Text>
-          <DropDownPicker
-            items={[
-              { label: "American", value: "American" },
-              { label: "Latino", value: "Latino" },
-              { label: "Asian", value: "Asian" },
-            ]}
-            defaultValue={raceEthnicity}
-            containerStyle={{ height: hp(6), width: wp(88) }}
-            style={{ backgroundColor: "#fafafa" }}
-            itemStyle={{ justifyContent: "flex-start" }}
-            dropDownStyle={{ backgroundColor: "#fafafa" }}
-            onChangeItem={(item) =>
-              this.setState({ raceEthnicity: item.value })
-            }
-          />
         </View>
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>Date of Birth</Text>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <DropDownPicker
-              items={months}
-              defaultValue={dateOfBirth.month}
-              containerStyle={{ height: hp(6), width: wp(32) }}
-              style={{ backgroundColor: "#fafafa" }}
-              itemStyle={{ justifyContent: "flex-start" }}
-              dropDownStyle={{ backgroundColor: "#fafafa" }}
-              onChangeItem={(item) =>
-                this.selectMonth(item, dateOfBirth, "dateOfBirth")
-              }
-            />
-            <DropDownPicker
-              items={days}
-              defaultValue={dateOfBirth.day}
-              containerStyle={{ height: hp(6), width: wp(18) }}
-              style={{ backgroundColor: "#fafafa" }}
-              itemStyle={{ justifyContent: "flex-start" }}
-              dropDownStyle={{ backgroundColor: "#fafafa" }}
-              onChangeItem={(item) =>
-                this.selectDay(item, dateOfBirth, "dateOfBirth")
-              }
-            />
-            <DropDownPicker
-              items={years}
-              defaultValue={dateOfBirth.year}
-              containerStyle={{ height: hp(6), width: wp(32) }}
-              style={{ backgroundColor: "#fafafa" }}
-              itemStyle={{ justifyContent: "flex-start" }}
-              dropDownStyle={{ backgroundColor: "#fafafa" }}
-              onChangeItem={(item) =>
-                this.selectYear(item, dateOfBirth, "dateOfBirth")
-              }
-            />
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <View
+              style={[styles.inputContainer, { flex: 1, marginHorizontal: 5 }]}
+            >
+              <TextInput
+                placeholder="Month"
+                value={moment(birthDate).format("MM")}
+                readOnly={true}
+              />
+            </View>
+            <View
+              style={[styles.inputContainer, { flex: 1, marginHorizontal: 5 }]}
+            >
+              <TextInput
+                placeholder="Day"
+                value={moment(birthDate).format("DD")}
+                readOnly={true}
+              />
+            </View>
+            <View
+              style={[styles.inputContainer, { flex: 1, marginHorizontal: 5 }]}
+            >
+              <TextInput
+                placeholder="Year"
+                value={moment(birthDate).format("YYYY")}
+                readOnly={true}
+              />
+            </View>
           </View>
         </View>
         <View style={{ paddingTop: hp(2), paddingHorizontal: wp(6) }}>
@@ -280,86 +196,60 @@ class PatientDemographicsScreen extends Component {
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>Street</Text>
           <View style={styles.inputContainer}>
-            <TextInput placeholder="Street" />
+            <TextInput
+              placeholder="Street"
+              value={address.line}
+              readOnly={true}
+            />
           </View>
         </View>
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>City</Text>
-          <DropDownPicker
-            items={[
-              { label: "Lafayette", value: "Lafayette" },
-              { label: "Muncie", value: "Muncie" },
-              { label: "Noblesville", value: "Noblesville" },
-            ]}
-            defaultValue={city}
-            containerStyle={{ height: hp(6), width: wp(88) }}
-            style={{ backgroundColor: "#fafafa" }}
-            itemStyle={{ justifyContent: "flex-start" }}
-            dropDownStyle={{ backgroundColor: "#fafafa" }}
-            onChangeItem={(item) => this.setState({ city: item.value })}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Street"
+              value={address.city}
+              readOnly={true}
+            />
+          </View>
         </View>
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>State</Text>
-          <DropDownPicker
-            items={[
-              { label: "Indiana", value: "Indiana" },
-              { label: "Iowa", value: "Iowa" },
-              { label: "Kansas", value: "Kansas" },
-            ]}
-            defaultValue={state}
-            containerStyle={{ height: hp(6), width: wp(88) }}
-            style={{ backgroundColor: "#fafafa" }}
-            itemStyle={{ justifyContent: "flex-start" }}
-            dropDownStyle={{ backgroundColor: "#fafafa" }}
-            onChangeItem={(item) => this.setState({ state: item.value })}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Street"
+              value={address.state}
+              readOnly={true}
+            />
+          </View>
         </View>
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>Country</Text>
-          <DropDownPicker
-            items={[
-              {
-                label: "United States of America",
-                value: "United States of America",
-              },
-              { label: "Uruguay", value: "Uruguay" },
-              { label: "Uzbakistan", value: "Uzbakistan" },
-            ]}
-            defaultValue={country}
-            containerStyle={{ height: hp(6), width: wp(88) }}
-            style={{ backgroundColor: "#fafafa" }}
-            itemStyle={{ justifyContent: "flex-start" }}
-            dropDownStyle={{ backgroundColor: "#fafafa" }}
-            onChangeItem={(item) => this.setState({ country: item.value })}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Street"
+              value={address.country}
+              readOnly={true}
+            />
+          </View>
         </View>
         <View style={{ paddingTop: hp(2), paddingHorizontal: wp(6) }}>
           <View style={styles.border} />
         </View>
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>Telecom</Text>
-          <DropDownPicker
-            items={[
-              { label: "Brightpoint", value: "Brightpoint" },
-              {
-                label: "Schurz Communications",
-                value: "Schurz Communications",
-              },
-              { label: "Allied Solutions", value: "Allied Solutions" },
-            ]}
-            defaultValue={telecom}
-            containerStyle={{ height: hp(6), width: wp(88) }}
-            style={{ backgroundColor: "#fafafa" }}
-            itemStyle={{ justifyContent: "flex-start" }}
-            dropDownStyle={{ backgroundColor: "#fafafa" }}
-            onChangeItem={(item) => this.setState({ telecom: item.value })}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Street"
+              value={telecom.value}
+              readOnly={true}
+            />
+          </View>
         </View>
         <View style={styles.singleItemContainer}>
           <Text style={styles.label}>General Practitioner</Text>
           <View style={styles.inputContainer}>
-            <TextInput placeholder="General Practitioner" />
+            <TextInput placeholder="General Practitioner" readOnly={true} />
           </View>
         </View>
       </ScrollView>
@@ -367,7 +257,7 @@ class PatientDemographicsScreen extends Component {
   }
 }
 
-export default PatientDemographicsScreen;
+export default connect(mapState, null)(PatientDemographicsScreen);
 
 const styles = StyleSheet.create({
   container: {
