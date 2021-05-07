@@ -106,7 +106,7 @@ class AccountScreen extends Component {
             marginTop: hp(1),
           }}
           onPress={() => {
-            if (window) window.localStorage.clear();
+            sessionStorage.clear();
             this.props.navigation.navigate("welcome");
           }}
         >
