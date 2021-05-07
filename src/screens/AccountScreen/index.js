@@ -54,7 +54,7 @@ class AccountScreen extends Component {
     const { patient } = this.props.user;
     return (
       <View style={styles.container}>
-        <Image
+        {/* <Image
           style={{
             width: wp(30),
             height: hp(15),
@@ -62,7 +62,7 @@ class AccountScreen extends Component {
             marginTop: 50,
           }}
           source={require("../../assets/images/user1.png")}
-        />
+        /> */}
         <View style={{ flexDirection: "row", paddingTop: hp(1.5) }}>
           <Text style={{ fontSize: 20, fontWeight: "700" }}>
             {patient.name[0].family}{" "}

@@ -30,7 +30,7 @@ class WelcomeScreen extends Component {
       .then(async (client) => {
         console.log(client);
         // const result = client.patient.read();
-        console.log(client);
+        console.log(client.patient.id);
 
         client.request("Patient/" + client.patient.id).then((patient) => {
           this.props.setUser({ patient, client });

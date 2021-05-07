@@ -61,7 +61,7 @@ class CoverageScreen extends Component {
                 borderRadius: 10,
                 padding: 15,
                 marginBottom: 15,
-                marginHorizontal: "30%",
+                marginHorizontal: "15%",
                 width: "70%",
               }}
             >

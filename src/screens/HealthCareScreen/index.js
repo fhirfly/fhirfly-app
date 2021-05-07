@@ -33,22 +33,6 @@ class HealthCareScreen extends Component {
     });
   }
 
-  shortWidth = () => {
-    Animated.timing(this.state.iconWidth, {
-      toValue: Platform.OS == "web" ? wp(3) : wp(10),
-      duration: 150,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  longWidth = () => {
-    Animated.timing(this.state.iconWidth, {
-      toValue: Platform.OS == "web" ? wp(36) : wp(20),
-      duration: 150,
-      useNativeDriver: false,
-    }).start();
-  };
-
   selectHealthCareProvider = (id) => {
     let a = this.state.healthProvider.map((item) => {
       if (item.resource.id == id && !item.selected)
@@ -70,15 +54,6 @@ class HealthCareScreen extends Component {
   };
 
   connectWithHealthCareProvider = () => {
-    // let a = this.state.healthProvider;
-    // for (let index = 0; index < a.length; index++) {
-    //   if (a[index]["selected"] == true) {
-    //     a[index]["connected"] = !a[index]["connected"];
-    //     a[index]["selected"] = false;
-    //   }
-    // }
-    // this.setState({ healthProvider: a });
-
     const selected = this.state.healthProvider.find((item) => item.selected);
     if (selected) {
       axios
@@ -90,7 +65,7 @@ class HealthCareScreen extends Component {
           const regex = /,/gi;
           try {
             FHIR.oauth2.authorize({
-              clientId: "0oabfidz5F3Ho3w8G5d6",
+              clientId: "0oap960mo1O8wH7Ab5d6",
               scope: allScopes.replace(regex, " "),
               fhirServiceUrl: org.resource.address,
               audience: org.resource.address,
@@ -98,27 +73,17 @@ class HealthCareScreen extends Component {
               iss: org.resource.address,
               target: "_self",
               redirect_uri: "http://localhost:19006/callback",
-              clientSecret: "TppBdLtYVlBEsepxpN20fM8KUde4l26007NQoia7",
             });
           } catch (err) {
             console.log(err);
           }
-
-          // this.props.navigation.navigate("connectHealthAccount", {
-          //   scopes: res.data,
-          //   org: selected,
-          // });
         });
     }
   };
 
   render() {
     let data = this.state.healthProvider;
-    const { searchVal } = this.state;
-    // if (searchVal)
-    //   data = data.filter((item) =>
-    //     item.resource.name.toLowerCase().includes(searchVal.toLowerCase())
-    //   );
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -171,24 +136,20 @@ class HealthCareScreen extends Component {
                 backgroundColor: "#e6e6e6",
                 alignItems: "center",
                 flexDirection: "row",
+                paddingHorizontal: 10,
               }}
             >
-              <Animated.View
-                style={{ width: this.state.iconWidth, alignItems: "flex-end" }}
-              >
-                <Image
-                  source={require("../../assets/icons/search.png")}
-                  style={{
-                    tintColor: "#979797",
-                    width: Platform.OS == "web" ? wp(2) : wp(6),
-                    height: hp(4),
-                    resizeMode: "contain",
-                  }}
-                />
-              </Animated.View>
+              <Image
+                source={require("../../assets/icons/search.png")}
+                style={{
+                  tintColor: "#979797",
+                  width: Platform.OS == "web" ? wp(4) : wp(6),
+                  height: hp(4),
+                  resizeMode: "contain",
+                }}
+              />
+
               <TextInput
-                onFocus={this.shortWidth}
-                onBlur={this.longWidth}
                 placeholder={"Search Healthcare Provider"}
                 placeholderTextColor={"#979797"}
                 style={{
@@ -196,6 +157,7 @@ class HealthCareScreen extends Component {
                   fontWeight: "700",
                   marginLeft: Platform.OS == "web" ? wp(1) : wp(2),
                   color: "#000",
+                  outline: "none",
                 }}
                 onChangeText={this.onSearchDelayed}
               />

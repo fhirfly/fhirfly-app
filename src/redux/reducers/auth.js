@@ -3,10 +3,17 @@ import _ from "lodash";
 
 var defaultState = {
   user: {},
+  activeBenefit: {},
 };
 
 var authReducer = (state = defaultState, action) => {
   switch (action.type) {
+    case Types.SET_ACTIVE_BENEFIT: {
+      let newState = Object.assign({}, state);
+      newState.activeBenefit = action.payload;
+      return newState;
+    }
+
     case Types.setUser: {
       let newState = Object.assign({}, state);
       newState.user = action.payload;

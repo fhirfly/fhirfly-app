@@ -22,82 +22,23 @@ import { Entypo, AntDesign } from "@expo/vector-icons";
 import RBSheet from "react-native-raw-bottom-sheet";
 import DropDownPicker from "react-native-dropdown-picker";
 import { connect } from "react-redux";
+import { setActiveBenefit } from "../../redux/actions/auth";
 
 const mapState = (state) => ({
   user: state.auth.user,
 });
+
+const mapDispatch = (dispatch) => ({
+  setActiveBenefit: (benefit) => dispatch(setActiveBenefit(benefit)),
+});
+
 import { hp, wp } from "../../utils/utility";
-// , icon: () => <Image source={require('../../assets/icons/check-double.png')} />
 class BenefitsScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-      benifits: [
-        {
-          id: 1,
-          image: require("../../assets/images/connect1.png"),
-          name: "Pharmacy",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 2,
-          image: require("../../assets/images/connect1.png"),
-          name: "Outpatient",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 3,
-          image: require("../../assets/images/connect1.png"),
-          name: "Skin Diseases",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 4,
-          image: require("../../assets/images/connect1.png"),
-          name: "Mental Health",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 5,
-          image: require("../../assets/images/connect1.png"),
-          name: "Eye And Vision Care",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 6,
-          image: require("../../assets/images/connect1.png"),
-          name: "Nerves, Spine & Brain",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 7,
-          image: require("../../assets/images/connect1.png"),
-          name: "General Surgery",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 8,
-          image: require("../../assets/images/connect1.png"),
-          name: "Birth & Child Treatment",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-        {
-          id: 9,
-          image: require("../../assets/images/connect1.png"),
-          name: "Infectious Diseases",
-          dateFrom: "January 24, 2020",
-          dateTo: "January 24, 2021",
-        },
-      ],
+      searchText: "",
       months: [
         { label: "January", value: "January" },
         { label: "February", value: "February" },
@@ -180,7 +121,7 @@ class BenefitsScreen extends Component {
     var that = this;
     client
       .request(
-        `/ExplanationOfBenefit?patient=Patient/${client.patient.id}&_include=ExplanationOfBenefit:insurer|ExplanationOfBenefit:provider|ExplanationOfBenefit:payee`,
+        `/ExplanationOfBenefit?patient=Patient/${client.patient.id}&_include=ExplanationOfBenefit:insurer|ExplanationOfBenefit:provider`,
         {
           resolveReferences: ["eobReference"],
           graph: true,
@@ -195,8 +136,56 @@ class BenefitsScreen extends Component {
       .then(
         function (data) {
           console.log(data);
+          let temp = data;
+          temp = temp.map((item) => {
+            let name = "";
+            if (item.resource.meta.profile) {
+              let nameIndex = item.resource.meta.profile[0].indexOf(
+                "C4BB-ExplanationOfBenefit-"
+              );
+              name = item.resource.meta.profile
+                ? item.resource.meta.profile[0]
+                    .substr(nameIndex + 26)
+                    .replaceAll("-", "")
+                    .replace("NonClinician|1.0.0", "")
+                    .replace("Institutional|1.0.0", "")
+                : "";
+            }
+
+            let idNumber = item.resource.identifier.find((item) =>
+              item.type.coding.find((ite) => ite.code == "uc")
+            );
+
+            let payment = item.resource.total.find((item) =>
+              item.category.coding.find((ite) => ite.code == "benefit")
+            );
+
+            let diagnosis = item.resource.diagnosis.find((item) =>
+              item.type.find((diag) =>
+                diag.coding.find((ite) => ite.code == "principal")
+              )
+            );
+
+            return {
+              ...item,
+              ...item.resource,
+              name,
+              image: require("../../assets/images/connect1.png"),
+              dateFrom: item.resource.billablePeriod
+                ? item.resource.billablePeriod.start
+                : item.resource.payment.date,
+              dateTo: item.resource.billablePeriod
+                ? item.resource.billablePeriod.end
+                : item.resource.payment.date,
+              idNumber: idNumber ? idNumber.value : "",
+              payment: payment ? `$${payment.amount.value}` : "$0",
+              diagnosis: diagnosis.diagnosisCodeableConcept.coding[0].display,
+              diagnosisAll: item.resource.diagnosis,
+              paymentOrig: item.resource.payment,
+            };
+          });
           that.setState({
-            data,
+            data: temp,
           });
         },
         function (error) {
@@ -274,7 +263,16 @@ class BenefitsScreen extends Component {
       years,
       provider,
       defaultProvider,
+      data,
+      searchText,
     } = this.state;
+
+    let tempData = data;
+    console.log(searchText);
+    if (searchText)
+      tempData = tempData.filter((item) =>
+        item.provider.display.toLowerCase().includes(searchText.toLowerCase())
+      );
     return (
       <Container>
         <Header
@@ -329,19 +327,21 @@ class BenefitsScreen extends Component {
                   fontWeight: "700",
                   marginLeft: wp(2),
                   color: "#000",
+                  outline: "none",
                 }}
+                value={searchText}
+                onChangeText={(val) => this.setState({ searchText: val })}
               />
             </View>
           </View>
           <View style={{ height: hp(2) }} />
           <ScrollView style={{ backgroundColor: "#f5f5f5" }}>
-            {this.state.benifits.map((item, index) => (
+            {tempData.map((item, index) => (
               <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate("Benefits Details", {
-                    benefitID: item.id,
-                  })
-                }
+                onPress={() => {
+                  this.props.setActiveBenefit(item);
+                  this.props.navigation.navigate("Benefits Details");
+                }}
                 key={index}
                 style={styles.mainBtn}
               >
@@ -352,11 +352,6 @@ class BenefitsScreen extends Component {
                     alignItems: "center",
                   }}
                 >
-                  <Image
-                    resizeMode="contain"
-                    style={{ width: wp(14), height: hp(7) }}
-                    source={item.image}
-                  />
                   <View style={{ height: hp(7) }}>
                     <Text
                       style={{
@@ -365,6 +360,18 @@ class BenefitsScreen extends Component {
                         fontWeight: "bold",
                       }}
                     >
+                      {item.provider.display}
+                    </Text>
+                    <Text
+                      style={{
+                        paddingLeft: wp(2.5),
+                        fontSize: 12,
+                        color: "#949494",
+                      }}
+                    >
+                      <Text style={{ fontWeight: "bold", color: "blacks" }}>
+                        Type :
+                      </Text>{" "}
                       {item.name}
                     </Text>
                     <Text
@@ -374,7 +381,22 @@ class BenefitsScreen extends Component {
                         color: "#949494",
                       }}
                     >
+                      <Text style={{ fontWeight: "bold", color: "blacks" }}>
+                        Billable Period :
+                      </Text>{" "}
                       {item.dateFrom + " - " + item.dateTo}
+                    </Text>
+                    <Text
+                      style={{
+                        paddingLeft: wp(2.5),
+                        fontSize: 12,
+                        color: "#949494",
+                      }}
+                    >
+                      <Text style={{ fontWeight: "bold", color: "blacks" }}>
+                        Payment :
+                      </Text>{" "}
+                      {item.payment}
                     </Text>
                   </View>
                 </View>
@@ -561,7 +583,7 @@ class BenefitsScreen extends Component {
   }
 }
 
-export default connect(mapState, null)(BenefitsScreen);
+export default connect(mapState, mapDispatch)(BenefitsScreen);
 
 const styles = StyleSheet.create({
   container: {
