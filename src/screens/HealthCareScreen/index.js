@@ -11,9 +11,11 @@ import {
   Platform,
   ActivityIndicator,
 } from "react-native";
-
+import _ from "lodash";
 import { wp, hp } from "../../utils/utility";
 import axios from "axios";
+import FHIR from "fhirclient";
+
 class HealthCareScreen extends Component {
   constructor(props) {
     super(props);
@@ -22,30 +24,14 @@ class HealthCareScreen extends Component {
       healthProvider: [],
       searchVal: "",
     };
+    this.onSearchDelayed = _.debounce(this.onSearch, 2000);
   }
 
   componentDidMount() {
     axios.get("https://api.fhirfly.io/network/Endpoint").then((res) => {
-      console.log(res.data);
       this.setState({ healthProvider: res.data.entry });
     });
   }
-
-  shortWidth = () => {
-    Animated.timing(this.state.iconWidth, {
-      toValue: Platform.OS == "web" ? wp(3) : wp(10),
-      duration: 150,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  longWidth = () => {
-    Animated.timing(this.state.iconWidth, {
-      toValue: Platform.OS == "web" ? wp(36) : wp(20),
-      duration: 150,
-      useNativeDriver: false,
-    }).start();
-  };
 
   selectHealthCareProvider = (id) => {
     let a = this.state.healthProvider.map((item) => {
@@ -59,40 +45,45 @@ class HealthCareScreen extends Component {
     this.setState({ healthProvider: a });
   };
 
-  connectWithHealthCareProvider = () => {
-    // let a = this.state.healthProvider;
-    // for (let index = 0; index < a.length; index++) {
-    //   if (a[index]["selected"] == true) {
-    //     a[index]["connected"] = !a[index]["connected"];
-    //     a[index]["selected"] = false;
-    //   }
-    // }
-    // this.setState({ healthProvider: a });
+  onSearch = (val) => {
+    axios
+      .get(`https://api.fhirfly.io/network/Endpoint/?name=${val}`)
+      .then((res) => {
+        this.setState({ healthProvider: res.data.entry });
+      });
+  };
 
+  connectWithHealthCareProvider = () => {
     const selected = this.state.healthProvider.find((item) => item.selected);
     if (selected) {
-      console.log(
-        `${selected.resource.address}/.well-known/smart-configuration`
-      );
       axios
         .get(`${selected.resource.address}/.well-known/smart-configuration`)
         .then((res) => {
-          console.log(res.data);
-          this.props.navigation.navigate("connectHealthAccount", {
-            scopes: res.data,
-            org: selected,
-          });
+          const org = selected;
+          const scopes = res.data;
+          const allScopes = scopes.scopes_supported.toString();
+          const regex = /,/gi;
+          try {
+            FHIR.oauth2.authorize({
+              clientId: "0oap960mo1O8wH7Ab5d6",
+              scope: allScopes.replace(regex, " "),
+              fhirServiceUrl: org.resource.address,
+              audience: org.resource.address,
+              completeInTarget: true,
+              iss: org.resource.address,
+              target: "_self",
+              redirect_uri: "http://localhost:19006/callback",
+            });
+          } catch (err) {
+            console.log(err);
+          }
         });
     }
   };
 
   render() {
     let data = this.state.healthProvider;
-    const { searchVal } = this.state;
-    if (searchVal)
-      data = data.filter((item) =>
-        item.resource.name.toLowerCase().includes(searchVal.toLowerCase())
-      );
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -145,24 +136,20 @@ class HealthCareScreen extends Component {
                 backgroundColor: "#e6e6e6",
                 alignItems: "center",
                 flexDirection: "row",
+                paddingHorizontal: 10,
               }}
             >
-              <Animated.View
-                style={{ width: this.state.iconWidth, alignItems: "flex-end" }}
-              >
-                <Image
-                  source={require("../../assets/icons/search.png")}
-                  style={{
-                    tintColor: "#979797",
-                    width: Platform.OS == "web" ? wp(2) : wp(6),
-                    height: hp(4),
-                    resizeMode: "contain",
-                  }}
-                />
-              </Animated.View>
+              <Image
+                source={require("../../assets/icons/search.png")}
+                style={{
+                  tintColor: "#979797",
+                  width: Platform.OS == "web" ? wp(4) : wp(6),
+                  height: hp(4),
+                  resizeMode: "contain",
+                }}
+              />
+
               <TextInput
-                onFocus={this.shortWidth}
-                onBlur={this.longWidth}
                 placeholder={"Search Healthcare Provider"}
                 placeholderTextColor={"#979797"}
                 style={{
@@ -170,9 +157,9 @@ class HealthCareScreen extends Component {
                   fontWeight: "700",
                   marginLeft: Platform.OS == "web" ? wp(1) : wp(2),
                   color: "#000",
+                  outline: "none",
                 }}
-                value={this.state.searchVal}
-                onChangeText={(val) => this.setState({ searchVal: val })}
+                onChangeText={this.onSearchDelayed}
               />
             </View>
           </View>
