@@ -65,7 +65,7 @@ class AccountScreen extends Component {
         /> */}
         <View style={{ flexDirection: "row", paddingTop: hp(1.5) }}>
           <Text style={{ fontSize: 20, fontWeight: "700" }}>
-            {patient.name[0].family}{" "}
+            {patient.name[0].given[0]} {patient.name[0].family}{" "}
           </Text>
           <Text>({moment().diff(moment(patient.birthDate), "years")})</Text>
         </View>

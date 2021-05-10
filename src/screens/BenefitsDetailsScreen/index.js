@@ -47,13 +47,14 @@ class BenefitsDetailsScreen extends Component {
         value: `$${item.amount.value}`,
       };
     });
-
-    let tempAdjudication = adjudication.map((item) => {
-      return {
-        name: `${item.category.coding[0].display} : `,
-        value: `$${item.amount.value}`,
-      };
-    });
+    var tempAdjudication = [];
+    if (adjudication)
+      tempAdjudication = adjudication.map((item) => {
+        return {
+          name: `${item.category.coding[0].display} : `,
+          value: `$${item.amount.value}`,
+        };
+      });
 
     let diagnosis = diagnosisAll.map((item) => {
       return {
@@ -62,12 +63,14 @@ class BenefitsDetailsScreen extends Component {
       };
     });
 
-    let procedures = procedure.map((item) => {
-      return {
-        value: item.procedureCodeableConcept.coding[0].display,
-        name: `${item.type[0].coding[0].display} : `,
-      };
-    });
+    var procedures = [];
+    if (procedure)
+      procedures = procedure.map((item) => {
+        return {
+          value: item.procedureCodeableConcept.coding[0].display,
+          name: `${item.type[0].coding[0].display} : `,
+        };
+      });
     // valueString, valueQuantity
     let tempSupportingInfo = supportingInfo.map((item) => {
       if (item.timingDate)
@@ -248,15 +251,8 @@ class BenefitsDetailsScreen extends Component {
 
   render() {
     const { dataFieldSection, showId } = this.state;
-    const {
-      idNumber,
-      payment,
-      name,
-      dateFrom,
-      dateTo,
-      provider,
-      diagnosis,
-    } = this.props.activeBenefit;
+    const { idNumber, payment, name, dateFrom, dateTo, provider, diagnosis } =
+      this.props.activeBenefit;
     return (
       <ScrollView
         style={styles.container}
