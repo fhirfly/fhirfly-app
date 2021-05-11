@@ -320,7 +320,7 @@ class BenefitsScreen extends Component {
                 />
               </View>
               <TextInput
-                placeholder={"Search Benifits "}
+                placeholder={"Search Benefits "}
                 placeholderTextColor={"#979797"}
                 style={{
                   fontSize: 15,

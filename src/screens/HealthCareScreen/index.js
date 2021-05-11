@@ -28,7 +28,7 @@ class HealthCareScreen extends Component {
   }
 
   componentDidMount() {
-    axios.get("https://api.fhirfly.io/network/Endpoint").then((res) => {
+    axios.get("https://api.fhirfly.io/network/Endpoint?status=test").then((res) => {
       this.setState({ healthProvider: res.data.entry });
     });
   }

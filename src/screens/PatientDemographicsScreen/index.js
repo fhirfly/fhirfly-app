@@ -76,7 +76,6 @@ class PatientDemographicsScreen extends Component {
               <TextInput
                 placeholder="First name"
                 value={this.state.firstName}
-                onChangeText={(val) => this.setState({ firstName: val })}
                 readOnly={true}
               />
             </View>
@@ -87,7 +86,6 @@ class PatientDemographicsScreen extends Component {
               <TextInput
                 placeholder="Last name"
                 value={this.state.lastName}
-                onChangeText={(val) => this.setState({ lastName: val })}
                 readOnly={true}
               />
             </View>
@@ -99,7 +97,6 @@ class PatientDemographicsScreen extends Component {
             <TextInput
               placeholder="Member ID"
               value={this.state.memberId}
-              onChangeText={(val) => this.setState({ memberId: val })}
               style={{ width: "100%" }}
               readOnly={true}
             />
@@ -110,9 +107,8 @@ class PatientDemographicsScreen extends Component {
             <Text style={styles.label}>Birth Sex</Text>
             <View style={[styles.inputContainer]}>
               <TextInput
-                placeholder="Birth Sec"
+                placeholder="Birth Sex"
                 value={birthSex}
-                onChangeText={(val) => this.setState({ birthSex: val })}
                 style={{ width: "100%" }}
                 readOnly={true}
               />
@@ -124,7 +120,6 @@ class PatientDemographicsScreen extends Component {
               <TextInput
                 placeholder="Gender"
                 value={gender}
-                onChangeText={(val) => this.setState({ gender: val })}
                 style={{ width: "100%" }}
                 readOnly={true}
               />
@@ -138,7 +133,6 @@ class PatientDemographicsScreen extends Component {
               <TextInput
                 placeholder="race"
                 value={race}
-                onChangeText={(val) => this.setState({ race: val })}
                 readOnly={true}
               />
             </View>
@@ -149,7 +143,6 @@ class PatientDemographicsScreen extends Component {
               <TextInput
                 placeholder="ethnicity"
                 value={ethnicity}
-                onChangeText={(val) => this.setState({ ethnicity: val })}
                 readOnly={true}
               />
             </View>
@@ -244,12 +237,6 @@ class PatientDemographicsScreen extends Component {
               value={telecom.value}
               readOnly={true}
             />
-          </View>
-        </View>
-        <View style={styles.singleItemContainer}>
-          <Text style={styles.label}>General Practitioner</Text>
-          <View style={styles.inputContainer}>
-            <TextInput placeholder="General Practitioner" readOnly={true} />
           </View>
         </View>
       </ScrollView>

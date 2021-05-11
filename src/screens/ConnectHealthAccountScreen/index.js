@@ -30,14 +30,13 @@ class ConnectHealthAccountScreen extends Component {
     const regex = /,/gi;
     try {
       FHIR.oauth2.authorize({
-        client_id: "0oabfidz5F3Ho3w8G5d6",
+        client_id: "0oap960mo1O8wH7Ab5d6",
         scope: allScopes.replace(regex, " "),
         fhirServiceUrl: org.resource.address,
         completeInTarget: true,
         iss: org.resource.address,
         target: "_self",
         redirect_uri: "http://localhost:19006/callback",
-        client_secret: "TppBdLtYVlBEsepxpN20fM8KUde4l26007NQoia7",
       });
     } catch (err) {
       console.log(err);

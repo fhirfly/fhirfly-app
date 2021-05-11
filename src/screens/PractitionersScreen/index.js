@@ -19,12 +19,12 @@ class CoverageScreen extends Component {
     var that = this;
     client
       .request(`/Practitioner`, {
-        resolveReferences: ["eobReference"],
+        resolveReferences: ["practitionerReference"],
         graph: true,
       })
       .then(function (data) {
         if (!data.entry || !data.entry.length) {
-          throw new Error("No Benefits found for the selected patient");
+          throw new Error("No Practitioners found for the selected patient");
         }
         return data.entry;
       })
@@ -74,6 +74,10 @@ class CoverageScreen extends Component {
                 <Text style={{ fontWeight: "bold", marginRight: 10 }}>
                   Name :
                 </Text>
+                <Text>
+                  {item.resource.name ? item.resource.name[0].given : ""}
+                </Text>
+                <Text> </Text>
                 <Text>
                   {item.resource.name ? item.resource.name[0].family : ""}
                 </Text>

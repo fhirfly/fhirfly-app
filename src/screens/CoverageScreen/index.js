@@ -21,13 +21,13 @@ class CoverageScreen extends Component {
       .request(
         `/Coverage?subscriber=Patient/${client.patient.id}&_include=Coverage:beneficiary`,
         {
-          resolveReferences: ["eobReference"],
+          resolveReferences: ["coverageReference"],
           graph: true,
         }
       )
       .then(function (data) {
         if (!data.entry || !data.entry.length) {
-          throw new Error("No Benefits found for the selected patient");
+          throw new Error("No Coverages found for the selected patient");
         }
         return data.entry;
       })
@@ -93,11 +93,21 @@ class CoverageScreen extends Component {
                 <Text>
                   {patients.find(
                     (ite) => ite.resource.id == item.resource.beneficiary
-                  )
-                    ? patients.find(
+                  )? patients.find(
+                      (ite) => ite.resource.id == item.resource.beneficiary
+                      ).resource.name[0].given
+                    : ""
+                  }
+                </Text>
+                <Text> </Text>
+                <Text>
+                  {patients.find(
+                    (ite) => ite.resource.id == item.resource.beneficiary
+                  )? patients.find(
                         (ite) => ite.resource.id == item.resource.beneficiary
                       ).resource.name[0].family
-                    : ""}
+                    : ""
+                  }
                 </Text>
               </View>
               <View
