@@ -71,11 +71,16 @@ class BenefitsDetailsScreen extends Component {
           name: `${item.type[0].coding[0].display} : `,
         };
       });
-    // valueString, valueQuantity
+
     let tempSupportingInfo = supportingInfo.map((item) => {
       if (item.timingDate)
         return { name: "Timing Date : ", value: item.timingDate };
       else {
+        if (item.code){
+          return { 
+            name: `${item.code.coding[0].display}`,
+          };
+        }
         if (item.category.coding[0].display)
           return {
             name: `${item.category.coding[0].display} : `,
@@ -141,7 +146,7 @@ class BenefitsDetailsScreen extends Component {
         },
         {
           label: `${payee.type.coding[0].display}`,
-          value: `${payee.party.display}`,
+          value: `Payee: ${payee.party.display}`,
           viewSection: false,
           expandSection: false,
           sectionHeight: new Animated.Value(hp(10)),
@@ -334,35 +339,6 @@ class BenefitsDetailsScreen extends Component {
                 height: hp(9),
               }}
             >
-              {/* <View
-                style={{
-                  width: wp(48),
-                  flexDirection: "row",
-                  alignItems: "center",
-                  height: hp(9),
-                }}
-              >
-                <Image
-                  style={{
-                    width: wp(13),
-                    height: hp(6.5),
-                    resizeMode: "contain",
-                    borderRadius: 15,
-                  }}
-                  resizeMode="contain"
-                  source={require("../../assets/images/user1.png")}
-                />
-                <View style={{ paddingLeft: wp(2) }}>
-                  <Text
-                    style={[styles.value, { fontSize: 14, fontWeight: "700" }]}
-                  >
-                    Bryon Rempel
-                  </Text>
-                  <Text style={[styles.label, { fontSize: 12 }]}>
-                    Pharmacist
-                  </Text>
-                </View>
-              </View> */}
               <View style={{ width: wp(48) }}>
                 <Text
                   style={[styles.value, { fontSize: 14, fontWeight: "700" }]}

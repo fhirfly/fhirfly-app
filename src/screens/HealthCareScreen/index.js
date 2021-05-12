@@ -47,7 +47,7 @@ class HealthCareScreen extends Component {
 
   onSearch = (val) => {
     axios
-      .get(`https://api.fhirfly.io/network/Endpoint/?name=${val}`)
+      .get(`https://api.fhirfly.io/network/Endpoint/?name=${val}&status=test`)
       .then((res) => {
         this.setState({ healthProvider: res.data.entry });
       });
@@ -72,7 +72,7 @@ class HealthCareScreen extends Component {
               completeInTarget: true,
               iss: org.resource.address,
               target: "_self",
-              redirect_uri: "http://localhost:19006/callback",
+              redirect_uri: "https://fhirfly.app/callback",
             });
           } catch (err) {
             console.log(err);
