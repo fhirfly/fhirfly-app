@@ -29,7 +29,6 @@ class WelcomeScreen extends Component {
       .ready()
       .then(async (client) => {
         console.log(client);
-        // const result = client.patient.read();
         console.log(client.patient.id);
 
         client.request("Patient/" + client.patient.id).then((patient) => {
@@ -85,8 +84,6 @@ class WelcomeScreen extends Component {
                 paddingTop: hp(5),
               }}
             >
-              Best of the Breed FHIR Technology to meet CMS Patient Access
-              Mandates
             </Text>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate("healthCare")}
