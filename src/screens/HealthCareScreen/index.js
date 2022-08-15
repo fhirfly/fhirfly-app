@@ -28,7 +28,7 @@ class HealthCareScreen extends Component {
   }
 
   componentDidMount() {
-    axios.get("https://api.fhirfly.io/network/Endpoint?status=test").then((res) => {
+    axios.get("https://fhir.directory/baseR4/Endpoint?connection-type=hl7-fhir-rest").then((res) => {
       this.setState({ healthProvider: res.data.entry });
     });
   }
@@ -47,7 +47,7 @@ class HealthCareScreen extends Component {
 
   onSearch = (val) => {
     axios
-      .get(`https://api.fhirfly.io/network/Endpoint/?name=${val}&status=test`)
+      .get(`https://fhir.directory/baseR4/Endpoint?connection-type=hl7-fhir-rest&name=${val}`)
       .then((res) => {
         this.setState({ healthProvider: res.data.entry });
       });
